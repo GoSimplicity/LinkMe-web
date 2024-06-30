@@ -32,6 +32,7 @@
             <a-space>
               <a-button type="link" @click="showPhoneLogin = true">使用手机号登录</a-button>
               <a-button type="link" @click="showForgotPassword = true">忘记密码</a-button>
+              <a-button type="link" @click="showRegister = true">注册</a-button>
             </a-space>
           </a-form-item>
         </a-form>
@@ -82,6 +83,42 @@
         </a-form-item>
       </a-form>
     </a-modal>
+
+    <!-- 注册模态框 -->
+    <a-modal v-model:visible="showRegister" title="注册" @ok="onRegister" @cancel="showRegister = false">
+      <a-form
+          :model="registerForm"
+          @finish="onRegisterFinish"
+          @finishFailed="onRegisterFinishFailed"
+      >
+        <a-form-item
+            name="email"
+            rules="[ { required: true, type: 'email', message: '请输入有效的邮箱地址!' } ]"
+        >
+          <a-input v-model:value="registerForm.email" placeholder="邮箱" />
+        </a-form-item>
+
+        <a-form-item
+            name="password"
+            rules="[ { required: true, message: '请输入密码!' } ]"
+        >
+          <a-input-password v-model:value="registerForm.password" placeholder="密码" />
+        </a-form-item>
+
+        <a-form-item
+            name="confirmPassword"
+            rules="[ { required: true, message: '请确认密码!' }, { validator: validateConfirmPassword } ]"
+        >
+          <a-input-password v-model:value="registerForm.confirmPassword" placeholder="确认密码" />
+        </a-form-item>
+
+        <a-form-item>
+          <a-button type="primary" htmlType="submit" block>
+            注册
+          </a-button>
+        </a-form-item>
+      </a-form>
+    </a-modal>
   </a-row>
 </template>
 
@@ -89,7 +126,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from '../utils/axios'
-import {message} from "ant-design-vue";
+import { message } from "ant-design-vue";
 
 export default {
   name: 'Login',
@@ -105,9 +142,23 @@ export default {
     const forgotPasswordForm = ref({
       email: ''
     })
+    const registerForm = ref({
+      email: '',
+      password: '',
+      confirmPassword: ''
+    })
     const showPhoneLogin = ref(false)
     const showForgotPassword = ref(false)
+    const showRegister = ref(false)
     const router = useRouter()
+
+    const validateConfirmPassword = (rule, value) => {
+      if (value !== registerForm.value.password) {
+        return Promise.reject('两次输入的密码不一致!')
+      } else {
+        return Promise.resolve()
+      }
+    }
 
     const onFinish = async (values) => {
       console.log('Form Submitted:', values)
@@ -127,6 +178,7 @@ export default {
         }
         await router.push('/')
       } catch (error) {
+        message.error('邮箱或密码错误')
         console.error('Failed:', error)
       }
     }
@@ -192,19 +244,45 @@ export default {
       console.log('Failed:', errorInfo)
     }
 
+    const onRegisterFinish = async (values) => {
+      console.log('Register Form Submitted:', values)
+      try {
+        await axios.post('/users/signup', {
+          email: values.email,
+          password: values.password,
+          confirmPassword: values.confirmPassword
+        })
+        console.log('注册成功')
+        showRegister.value = false
+        message.success('注册成功')
+      } catch (error) {
+        console.error('注册失败:', error)
+        message.error('注册失败')
+      }
+    }
+
+    const onRegisterFinishFailed = (errorInfo) => {
+      console.log('Failed:', errorInfo)
+    }
+
     return {
       form,
       phoneForm,
       forgotPasswordForm,
+      registerForm,
       showPhoneLogin,
       showForgotPassword,
+      showRegister,
       onFinish,
       onFinishFailed,
       onPhoneFinish,
       onPhoneFinishFailed,
       sendCode,
       onForgotPasswordFinish,
-      onForgotPasswordFinishFailed
+      onForgotPasswordFinishFailed,
+      onRegisterFinish,
+      onRegisterFinishFailed,
+      validateConfirmPassword
     }
   }
 }
