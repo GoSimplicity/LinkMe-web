@@ -1,7 +1,7 @@
 <template>
   <a-row type="flex" justify="center" align="middle" class="login-container">
     <a-col :span="8">
-      <div class="login-logo">LinkMe</div>
+      <div class="login-logo">LinkMe Admin</div>
       <a-card class="login-card">
         <a-form
             :model="form"
@@ -10,26 +10,78 @@
         >
           <a-form-item
               name="email"
-              rules="[ { required: true, type: 'email', message: 'Please input a valid email!' } ]"
+              rules="[ { required: true, type: 'email', message: '请输入有效的邮箱地址!' } ]"
           >
-            <a-input v-model:value="form.email" placeholder="Email" />
+            <a-input v-model:value="form.email" placeholder="邮箱" />
           </a-form-item>
 
           <a-form-item
               name="password"
-              rules="[ { required: true, message: 'Please input your password!' } ]"
+              rules="[ { required: true, message: '请输入密码!' } ]"
           >
-            <a-input-password v-model:value="form.password" placeholder="Password" />
+            <a-input-password v-model:value="form.password" placeholder="密码" />
           </a-form-item>
 
           <a-form-item>
             <a-button type="primary" htmlType="submit" block>
-              Log in
+              登录
             </a-button>
+          </a-form-item>
+
+          <a-form-item>
+            <a-space>
+              <a-button type="link" @click="showPhoneLogin = true">使用手机号登录</a-button>
+              <a-button type="link" @click="showForgotPassword = true">忘记密码</a-button>
+            </a-space>
           </a-form-item>
         </a-form>
       </a-card>
     </a-col>
+
+    <!-- 手机验证登录模态框 -->
+    <a-modal v-model:visible="showPhoneLogin" title="手机号登录" @ok="onPhoneLogin" @cancel="showPhoneLogin = false">
+      <a-form
+          :model="phoneForm"
+          @finish="onPhoneFinish"
+          @finishFailed="onPhoneFinishFailed"
+      >
+        <a-form-item
+            name="phone"
+            rules="[ { required: true, pattern: /^[0-9]{11}$/, message: '请输入有效的手机号!' } ]"
+        >
+          <a-input v-model:value="phoneForm.phone" placeholder="手机号" />
+        </a-form-item>
+
+        <a-form-item
+            name="code"
+            rules="[ { required: true, message: '请输入验证码!' } ]"
+        >
+          <a-input v-model:value="phoneForm.code" placeholder="验证码" />
+        </a-form-item>
+
+        <a-form-item>
+          <a-button type="primary" @click="sendCode">
+            发送验证码
+          </a-button>
+        </a-form-item>
+      </a-form>
+    </a-modal>
+
+    <!-- 找回密码模态框 -->
+    <a-modal v-model:visible="showForgotPassword" title="找回密码" @ok="onForgotPassword" @cancel="showForgotPassword = false">
+      <a-form
+          :model="forgotPasswordForm"
+          @finish="onForgotPasswordFinish"
+          @finishFailed="onForgotPasswordFinishFailed"
+      >
+        <a-form-item
+            name="email"
+            rules="[ { required: true, type: 'email', message: '请输入有效的邮箱地址!' } ]"
+        >
+          <a-input v-model:value="forgotPasswordForm.email" placeholder="邮箱" />
+        </a-form-item>
+      </a-form>
+    </a-modal>
   </a-row>
 </template>
 
@@ -37,6 +89,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from '../utils/axios'
+import {message} from "ant-design-vue";
 
 export default {
   name: 'Login',
@@ -45,7 +98,17 @@ export default {
       email: '',
       password: ''
     })
+    const phoneForm = ref({
+      phone: '',
+      code: ''
+    })
+    const forgotPasswordForm = ref({
+      email: ''
+    })
+    const showPhoneLogin = ref(false)
+    const showForgotPassword = ref(false)
     const router = useRouter()
+
     const onFinish = async (values) => {
       console.log('Form Submitted:', values)
       try {
@@ -54,15 +117,17 @@ export default {
           password: values.password
         })
         console.log('Success:', response.data)
+        const ref_token = response.headers['x-refresh-token']
+        if (ref_token) {
+          localStorage.setItem('refresh_token', ref_token)
+        }
         const token = response.headers['x-jwt-token']
         if (token) {
-          // 将 token 保存到 localStorage
           localStorage.setItem('authorization', token)
         }
         await router.push('/')
       } catch (error) {
         console.error('Failed:', error)
-        // 在这里处理登录失败逻辑，例如显示错误消息
       }
     }
 
@@ -70,10 +135,76 @@ export default {
       console.log('Failed:', errorInfo)
     }
 
+    const onPhoneFinish = async (values) => {
+      console.log('Phone Form Submitted:', values)
+      try {
+        const response = await axios.post('/users/login_sms', {
+          phone: values.phone,
+          code: values.code
+        })
+        console.log('Success:', response.data)
+        const ref_token = response.headers['x-refresh-token']
+        if (ref_token) {
+          localStorage.setItem('refresh_token', ref_token)
+        }
+        const token = response.headers['x-jwt-token']
+        if (token) {
+          localStorage.setItem('authorization', token)
+        }
+        showPhoneLogin.value = false
+        await router.push('/')
+        message.success('登录成功')
+      } catch (error) {
+        console.error('Failed:', error)
+        message.error('登录失败')
+      }
+    }
+
+    const onPhoneFinishFailed = (errorInfo) => {
+      console.log('Failed:', errorInfo)
+    }
+
+    const sendCode = async () => {
+      try {
+        await axios.post('/users/send_sms', {
+          phone: phoneForm.value.phone
+        })
+        console.log('验证码已发送')
+      } catch (error) {
+        console.error('发送验证码失败:', error)
+      }
+    }
+
+    const onForgotPasswordFinish = async (values) => {
+      console.log('Forgot Password Form Submitted:', values)
+      try {
+        await axios.post('/users/send_email', {
+          email: values.email
+        })
+        console.log('密码重置链接已发送')
+        showForgotPassword.value = false
+      } catch (error) {
+        console.error('发送密码重置链接失败:', error)
+      }
+    }
+
+    const onForgotPasswordFinishFailed = (errorInfo) => {
+      console.log('Failed:', errorInfo)
+    }
+
     return {
       form,
+      phoneForm,
+      forgotPasswordForm,
+      showPhoneLogin,
+      showForgotPassword,
       onFinish,
-      onFinishFailed
+      onFinishFailed,
+      onPhoneFinish,
+      onPhoneFinishFailed,
+      sendCode,
+      onForgotPasswordFinish,
+      onForgotPasswordFinishFailed
     }
   }
 }

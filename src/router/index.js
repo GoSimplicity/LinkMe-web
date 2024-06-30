@@ -7,7 +7,9 @@ import Review from '../views/Review.vue'
 import Permission from '../views/Permission.vue'
 import ScheduledTask from '../views/ScheduledTask.vue'
 import Section from '../views/Section.vue'
-import Dashboard from "@/views/Dashboard.vue";
+import Dashboard from '@/views/Dashboard.vue'
+import Profile from '@/views/Profile.vue'
+
 const routes = [
     { path: '/login', component: Login },
     {
@@ -21,6 +23,7 @@ const routes = [
             { path: 'permission', component: Permission },
             { path: 'scheduled-task', component: ScheduledTask },
             { path: 'section', component: Section },
+            { path: 'user/profile', component: Profile }, // 添加此行
         ]
     }
 ]
