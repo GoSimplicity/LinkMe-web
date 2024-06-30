@@ -16,7 +16,7 @@
             <a-icon type="user" />
             <span>用户管理</span>
           </a-menu-item>
-          <a-menu-item key="2-2" @click="goToPage('/user/profile')"> <!-- 添加此行 -->
+          <a-menu-item key="2-2" @click="goToPage('/user/profile')">
             <a-icon type="profile" />
             <span>个人资料</span>
           </a-menu-item>
@@ -103,7 +103,21 @@
         </div>
       </a-layout-header>
       <a-layout-content class="content">
-        <router-view />
+        <div v-if="$route.path === '/'" class="dashboard">
+          <h1 class="welcome-message">欢迎回来 {{ userName }} 🚩 </h1>
+          <div class="stats-cards">
+            <a-card class="stat-card" title="用户数量">
+              <p>{{ userStats }}</p>
+            </a-card>
+            <a-card class="stat-card" title="帖子数量">
+              <p>{{ postStats }}</p>
+            </a-card>
+            <a-card class="stat-card" title="审核任务">
+              <p>{{ reviewStats }}</p>
+            </a-card>
+          </div>
+        </div>
+        <router-view v-if="$route.path !== '/'" />
       </a-layout-content>
     </a-layout>
 
@@ -155,8 +169,12 @@ export default {
     })
     const changePasswordFormRef = ref(null)
     const router = useRouter()
-    const userName = ref('zijian wang') // 假设用户名为 Admin，可以根据实际情况修改
-    const userAvatar = ref('https://www.example.com/avatar.png') // 用户头像的链接
+    const userName = ref('zijian wang')
+    const userAvatar = ref('https://www.example.com/avatar.png')
+
+    const userStats = ref(0)
+    const postStats = ref(0)
+    const reviewStats = ref(0)
 
     const changePasswordRules = {
       email: [{ required: true, message: '请输入邮箱地址', type: 'email' }],
@@ -176,7 +194,7 @@ export default {
       try {
         await changePasswordFormRef.value.validate()
         const { email, password, newPassword, confirmPassword } = changePasswordForm.value
-        const response = await axios.post('/users/change_password', {
+        await axios.post('/users/change_password', {
           email,
           password,
           newPassword,
@@ -217,7 +235,23 @@ export default {
       }
     }
 
-    getProfile()
+    const getStats = async () => {
+      try {
+        const userResponse = await axios.get('/users/stats')
+        userStats.value = userResponse.data.count
+        const postResponse = await axios.get('/posts/stats')
+        postStats.value = postResponse.data.count
+        const reviewResponse = await axios.get('/reviews/stats')
+        reviewStats.value = reviewResponse.data.count
+      } catch (error) {
+        console.error('获取统计数据失败:', error)
+      }
+    }
+
+    onMounted(() => {
+      getProfile()
+      getStats()
+    })
 
     return {
       collapsed,
@@ -227,6 +261,9 @@ export default {
       changePasswordRules,
       userName,
       userAvatar,
+      userStats,
+      postStats,
+      reviewStats,
       goToPage,
       changePassword,
       logout
@@ -249,6 +286,7 @@ export default {
   background-color: #001529;
   border-bottom: 1px solid rgba(255, 255, 255, 0.3);
 }
+
 .logo-text {
   color: white;
   text-align: center;
@@ -283,6 +321,27 @@ export default {
   padding: 24px;
   background: #f0f2f5;
   min-height: 280px;
+}
+
+.dashboard {
+  text-align: center;
+}
+
+.welcome-message {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 24px;
+}
+
+.stats-cards {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 24px;
+}
+
+.stat-card {
+  flex: 1;
+  margin: 0 8px;
 }
 
 a-menu-item {

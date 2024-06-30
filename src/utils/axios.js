@@ -30,7 +30,7 @@ instance.interceptors.response.use(response => {
     return response
 }, error => {
     if (error.response && error.response.status === 400 && !error.response.data) {
-        message.error('登录已过期，请重新登录')
+        message.error('登录已过期，请重新登录').then(r => {})
         localStorage.removeItem('authorization')
         localStorage.removeItem('refresh_token')
         router.push('/login')
