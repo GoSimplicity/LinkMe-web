@@ -3,9 +3,8 @@ import {message} from 'ant-design-vue'
 import router from '../router'
 
 const instance = axios.create({
-    baseURL: 'http://45.136.14.21:9999', // 确认是你的后端服务器地址
-    timeout: 10000,
-    headers: {
+    baseURL: 'http://123.56.122.183:9999', // 确认是你的后端服务器地址
+    timeout: 10000, headers: {
         'Content-Type': 'application/json'
     }
 })
@@ -38,8 +37,7 @@ instance.interceptors.response.use(response => {
     console.log(error)
     message.error(error.message).then(r => {})
     if (error.response && error.response.status === 400 && !error.response.data) {
-        message.error('登录已过期，请重新登录').then(r => {
-        })
+        message.error('登录已过期，请重新登录').then(r => {})
         localStorage.removeItem('authorization')
         localStorage.removeItem('refresh_token')
         router.push('/login')

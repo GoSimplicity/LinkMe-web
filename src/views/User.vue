@@ -1,11 +1,10 @@
 <template>
+  <!--  用户卡片-->
   <a-table :columns="columns" :data-source="data">
-    <template #headerCell="{ column }">
+
+    <template #headerCell="{ column,title}">
       <template v-if="column.key === 'name'">
-        <span>
-          <smile-outlined/>
-          用户名
-        </span>
+        {{ title }}
       </template>
     </template>
 
@@ -42,53 +41,58 @@
   </a-table>
 </template>
 <script setup>
+import axios from "@/utils/axios.js";
+import {onMounted, ref} from "vue";
+
 const columns = [
   {
     name: 'Name',
+    title: '用户名',
     dataIndex: 'name',
     key: 'name',
   },
   {
-    title: 'Age',
+    title: '手机号',
     dataIndex: 'age',
     key: 'age',
   },
   {
-    title: 'Address',
+    title: '邮箱',
     dataIndex: 'address',
     key: 'address',
   },
   {
-    title: 'Tags',
+    title: '角色',
     key: 'tags',
     dataIndex: 'tags',
   },
   {
-    title: 'Action',
+    title: '操作',
     key: 'action',
   },
 ];
-const data = [
+const data = ref([
   {
     key: '1',
     name: 'John Brown',
-    age: 32,
-    address: 'New York No. 1 Lake Park',
-    tags: ['nice', 'developer'],
-  },
-  {
-    key: '2',
-    name: 'Jim Green',
-    age: 42,
-    address: 'London No. 1 Lake Park',
-    tags: ['loser'],
-  },
-  {
-    key: '3',
-    name: 'Joe Black',
-    age: 32,
-    address: 'Sidney No. 1 Lake Park',
-    tags: ['cool', 'teacher'],
-  },
-];
+    phone: 32,
+    Email: 'New York No. 1 Lake Park',
+    Role: ['nice', 'developer'],
+  }
+])
+
+onMounted(async () => {
+  const res_user = await axios.get("/users/get_user")
+  if (res_user.data.code === 200) {
+    data.value = res_user.data.data.map(item => {
+      return {
+        key: item.UserID,
+        name: item.NickName,
+        phone: item.Phone,
+        Email: item.Email,
+        Role: item.Role,
+      }
+    })
+  }
+})
 </script>
