@@ -21,19 +21,19 @@
             <span>个人资料</span>
           </a-menu-item>
         </a-sub-menu>
-        <a-sub-menu key="3" title="帖子管理">
+        <a-sub-menu key="3" title="帖子模块">
           <a-menu-item key="3-1" @click="goToPage('/post')">
             <a-icon type="file-text" />
             <span>帖子管理</span>
           </a-menu-item>
         </a-sub-menu>
-        <a-sub-menu key="4" title="审核管理">
+        <a-sub-menu key="4" title="审核模块">
           <a-menu-item key="4-1" @click="goToPage('/review')">
             <a-icon type="audit" />
             <span>审核管理</span>
           </a-menu-item>
         </a-sub-menu>
-        <a-sub-menu key="5" title="权限管理">
+        <a-sub-menu key="5" title="权限模块">
           <a-menu-item key="5-1" @click="goToPage('/permission')">
             <a-icon type="lock" />
             <span>权限管理</span>
@@ -45,7 +45,7 @@
             <span>定时任务</span>
           </a-menu-item>
         </a-sub-menu>
-        <a-sub-menu key="7" title="板块管理">
+        <a-sub-menu key="7" title="板块模块">
           <a-menu-item key="7-1" @click="goToPage('/section')">
             <a-icon type="appstore" />
             <span>板块管理</span>
