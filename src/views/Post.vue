@@ -1,23 +1,27 @@
 <template>
   <a-layout-content class="post-container">
+    <div class="header">
+      <a-button type="primary" @click="editPost(null)" class="add-btn">新增</a-button>
+    </div>
     <a-row :gutter="16">
       <a-col v-for="post in posts" :key="post.ID" :span="8">
-        <a-card :title="post.Title" class="post-item">
-          <p>{{ post.Content }}</p>
-          <p>作者: {{ post.Author.Name || '未知' }}</p>
-          <p>状态: {{ post.Status }}</p>
-          <a-button type="primary" @click="editPost(post.ID)" class="action-btn">编辑</a-button>
-          <a-button type="danger" @click="deletePost(post.ID)" class="action-btn">删除</a-button>
-          <a-button v-if="post.Status !== 'Published'" @click="publishPost(post.ID)" class="action-btn">发布</a-button>
-          <a-button v-if="post.Status === 'Published'" @click="retractPost(post.ID)" class="action-btn">撤销</a-button>
-          <a-button @click="updatePost(post.ID)" class="action-btn">更新</a-button>
+        <a-card :title="post.Title" class="post-item" @click="goToDetail(post.ID)">
+          <p><strong>内容:</strong> {{ post.Content }}</p>
+          <p><strong>作者:</strong> {{ post.Author.Name || '未知' }}</p>
+          <p><strong>状态:</strong> {{ post.Status }}</p>
+          <a-space>
+            <a-button type="dashed" @click.stop="deletePost(post.ID)">删除</a-button>
+            <a-button type="primary" v-if="post.Status !== 'Published'" @click.stop="publishPost(post.ID)">发布</a-button>
+            <a-button type="dashed" v-if="post.Status === 'Published'" @click.stop="retractPost(post.ID)">撤销</a-button>
+            <a-button type="dashed" @click.stop="updatePost(post.ID)">更新</a-button>
+          </a-space>
         </a-card>
       </a-col>
     </a-row>
     <div class="pagination">
-      <a-button @click="prevPage" :disabled="page === 1">上一页</a-button>
+      <a-button type="primary" @click="prevPage" :disabled="page === 1">上一页</a-button>
       <span>第 {{ page }} 页</span>
-      <a-button @click="nextPage" :disabled="posts.length < size">下一页</a-button>
+      <a-button type="primary" @click="nextPage" :disabled="posts.length < size">下一页</a-button>
     </div>
   </a-layout-content>
 </template>
@@ -31,7 +35,7 @@ export default {
     return {
       posts: [],
       page: 1,
-      size: 10
+      size: 12
     };
   },
   mounted() {
@@ -40,7 +44,7 @@ export default {
   methods: {
     async fetchPosts() {
       try {
-        const response = await axios.post('/posts/list_pub', {
+        const response = await axios.post('/posts/list_post', {
           page: this.page,
           size: this.size
         });
@@ -52,6 +56,9 @@ export default {
       } catch (error) {
         console.error('Error fetching posts:', error);
       }
+    },
+    goToDetail(postId) {
+      this.$router.push({ name: 'PostDetail', params: { postId } });
     },
     editPost(postId) {
       // 编辑帖子功能实现
@@ -94,12 +101,19 @@ export default {
   min-height: 280px;
 }
 
-.post-item {
+.header {
+  display: flex;
+  justify-content: flex-end;
   margin-bottom: 16px;
 }
 
-.action-btn {
-  margin-right: 8px;
+.add-btn {
+  margin-bottom: 16px;
+}
+
+.post-item {
+  margin-bottom: 16px;
+  cursor: pointer;
 }
 
 .pagination {
