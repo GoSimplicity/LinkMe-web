@@ -1,5 +1,11 @@
 <template>
-  <!--  用户卡片-->
+  <a-button type="primary" @click="showModal">
+    <PlusOutlined />
+    <span class="nav-text">添加用户</span>
+  </a-button>
+  <!-- 间隔 -->
+  <a-divider type="horizontal"/>
+  <!-- 用户卡片 -->
   <a-table :columns="columns" :data-source="data">
 
     <template #headerCell="{ column,title}">
@@ -39,10 +45,69 @@
       </template>
     </template>
   </a-table>
+<!-- 添加用户表单弹窗（用户名、手机号、邮箱、角色） -->
+  <a-modal
+    :visible="addUserModalVisible"
+    title="添加用户"
+    @cancel="addUserModalVisible = false"
+    cancel-text="取消"
+    ok-text="确定"
+    @ok="handleAddUser"
+  >
+    <a-form
+      :model="addUserForm"
+      :rules="addUserRules"
+    >
+      <a-form-item label="用户名" name="name">
+        <a-input v-model:value="addUserForm.name"/>
+      </a-form-item>
+    </a-form>
+  </a-modal>
 </template>
 <script setup>
+import {PlusOutlined, DownOutlined} from '@ant-design/icons-vue';
 import axios from "@/utils/axios.js";
-import {onMounted, ref} from "vue";
+import {onMounted, reactive, ref} from "vue";
+
+const addUserModalVisible = ref(false);
+
+const addUserForm = reactive({
+  name: "",
+  phone: "",
+  email: "",
+  role: "",
+})
+
+const addUserRules = {
+  name: [
+    {
+      required: true,
+      message: '请输入用户名',
+      trigger: 'blur',
+    },
+  ],
+  phone: [
+    {
+      required: true,
+      message: '请输入手机号',
+      trigger: 'blur',
+    },
+  ],
+  email: [
+    {
+      required: true,
+      message: '请输入邮箱',
+      trigger: 'blur',
+    },
+  ],
+  role: [
+    {
+      required: true,
+      message: '请选择角色',
+      trigger: 'blur',
+    },
+  ],
+}
 
 const columns = [
   {
@@ -81,6 +146,26 @@ const data = ref([
   }
 ])
 
+// 展示添加用户表单弹窗
+const showModal = () => {
+  addUserModalVisible.value = true
+};
+
+// 确定提交添加用户表单
+const handleAddUser = async () => {
+  const res_user = await axios.post("/users/add_user", {
+    NickName: "test",
+    Phone: "12345678901",
+    Email: "test@test.com",
+    Password: "123456",
+    Role: "admin",
+  })
+  if (res_user.data.code === 200) {
+    add_user_visible.value = false
+  }
+}
+
+// 初始化用户列表
 onMounted(async () => {
   const res_user = await axios.get("/users/get_user")
   if (res_user.data.code === 200) {
