@@ -3,6 +3,7 @@ import Index from '../views/Index.vue'
 import Login from '../views/Login.vue'
 import User from '../views/User.vue'
 import Post from '../views/Post.vue'
+import PostDetail from '../views/PostDetail.vue' // 引入帖子详情组件
 import Review from '../views/Review.vue'
 import Permission from '../views/Permission.vue'
 import ScheduledTask from '../views/ScheduledTask.vue'
@@ -19,11 +20,12 @@ const routes = [
             { path: 'dashboard', component: Dashboard },
             { path: 'user', component: User },
             { path: 'post', component: Post },
+            { path: 'post/detail_post/:postId', name: 'PostDetail', component: PostDetail }, // 添加帖子详情路由
             { path: 'review', component: Review },
             { path: 'permission', component: Permission },
             { path: 'scheduled-task', component: ScheduledTask },
             { path: 'section', component: Section },
-            { path: 'user/profile', component: Profile }, // 添加此行
+            { path: 'user/profile', component: Profile },
         ]
     }
 ]
