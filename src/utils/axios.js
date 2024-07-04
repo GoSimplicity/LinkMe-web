@@ -1,10 +1,12 @@
 import axios from 'axios'
-import {message} from 'ant-design-vue'
+import { message } from 'ant-design-vue'
 import router from '../router'
 
 const instance = axios.create({
-    baseURL: 'http://123.56.122.183:9999', // 确认是你的后端服务器地址
-    timeout: 10000, headers: {
+    // baseURL: 'http://123.56.122.183:9999', // 确认是你的后端服务器地址
+    baseURL: 'http://localhost:9999', // 确认是你的后端服务器地址
+    timeout: 10000,
+    headers: {
         'Content-Type': 'application/json'
     }
 })
@@ -26,23 +28,36 @@ instance.interceptors.request.use(config => {
 
 // 响应拦截器，处理 token 过期
 instance.interceptors.response.use(response => {
-    console.log(response)
     if (response.data.code !== 200) {
         if (response.data.msg) {
-            message.error(response.data.msg).then(r => {})
+            message.error(response.data.msg).then(r => { })
         }
     }
     return response
 }, error => {
-    console.log(error)
-    message.error(error.message).then(r => {})
-    if (error.response && error.response.status === 400 && !error.response.data) {
-        message.error('登录已过期，请重新登录').then(r => {})
-        localStorage.removeItem('authorization')
-        localStorage.removeItem('refresh_token')
-        router.push('/login')
-    }
+    handleErrorResponse(error)
     return Promise.reject(error)
 })
+
+// 处理错误响应
+function handleErrorResponse(error) {
+    if (error.response) {
+        console.log('Response error:', error.response)
+        if (error.response.status === 400 && !error.response.data) {
+            message.error('登录已过期，请重新登录').then(r => { })
+            localStorage.removeItem('authorization')
+            localStorage.removeItem('refresh_token')
+            router.push('/login')
+        } else {
+            message.error(error.response.data.msg || '请求出错').then(r => { })
+        }
+    } else if (error.request) {
+        console.log('Request error:', error.request)
+        message.error('请求无响应，请检查网络').then(r => { })
+    } else {
+        console.log('Error:', error.message)
+        message.error(error.message).then(r => { })
+    }
+}
 
 export default instance

@@ -1,14 +1,13 @@
 <template>
-  <a-button type="primary" @click="showModal">
-    <PlusOutlined />
-    <span class="nav-text">添加用户</span>
-  </a-button>
-  <!-- 间隔 -->
-  <a-divider type="horizontal"/>
   <!-- 用户卡片 -->
-  <a-table :columns="columns" :data-source="data">
-
-    <template #headerCell="{ column,title}">
+  <a-table
+      :columns="columns"
+      :data-source="data"
+      :pagination="pagination"
+      @change="handleTableChange"
+      class="user-table"
+  >
+    <template #headerCell="{ column, title }">
       <template v-if="column.key === 'name'">
         {{ title }}
       </template>
@@ -25,106 +24,44 @@
           <a-tag
               v-for="tag in record.tags"
               :key="tag"
-              :color="tag === 'loser' ? 'volcano' : tag.length > 5 ? 'geekblue' : 'green'"
+              :color="getTagColor(tag)"
+              class="tag"
           >
             {{ tag.toUpperCase() }}
           </a-tag>
         </span>
       </template>
       <template v-else-if="column.key === 'action'">
-        <span>
-          <a>Invite 一 {{ record.name }}</a>
-          <a-divider type="vertical"/>
-          <a>Delete</a>
-          <a-divider type="vertical"/>
-          <a class="ant-dropdown-link">
-            More actions
-            <down-outlined/>
-          </a>
+        <span class="action-buttons">
+          <a>编辑</a>
+          <a-divider type="vertical" />
+          <a>删除</a>
+          <a-divider type="vertical" />
         </span>
       </template>
     </template>
   </a-table>
-<!-- 添加用户表单弹窗（用户名、手机号、邮箱、角色） -->
-  <a-modal
-    :visible="addUserModalVisible"
-    title="添加用户"
-    @cancel="addUserModalVisible = false"
-    cancel-text="取消"
-    ok-text="确定"
-    @ok="handleAddUser"
-  >
-    <a-form
-      :model="addUserForm"
-      :rules="addUserRules"
-    >
-      <a-form-item label="用户名" name="name">
-        <a-input v-model:value="addUserForm.name"/>
-      </a-form-item>
-    </a-form>
-  </a-modal>
 </template>
+
 <script setup>
-import {PlusOutlined, DownOutlined} from '@ant-design/icons-vue';
 import axios from "@/utils/axios.js";
-import {onMounted, reactive, ref} from "vue";
-
-const addUserModalVisible = ref(false);
-
-const addUserForm = reactive({
-  name: "",
-  phone: "",
-  email: "",
-  role: "",
-})
-
-const addUserRules = {
-  name: [
-    {
-      required: true,
-      message: '请输入用户名',
-      trigger: 'blur',
-    },
-  ],
-  phone: [
-    {
-      required: true,
-      message: '请输入手机号',
-      trigger: 'blur',
-    },
-  ],
-  email: [
-    {
-      required: true,
-      message: '请输入邮箱',
-      trigger: 'blur',
-    },
-  ],
-  role: [
-    {
-      required: true,
-      message: '请选择角色',
-      trigger: 'blur',
-    },
-  ],
-}
+import { onMounted, ref } from "vue";
 
 const columns = [
   {
-    name: 'Name',
     title: '用户名',
     dataIndex: 'name',
     key: 'name',
   },
   {
     title: '手机号',
-    dataIndex: 'age',
-    key: 'age',
+    dataIndex: 'phone',
+    key: 'phone',
   },
   {
     title: '邮箱',
-    dataIndex: 'address',
-    key: 'address',
+    dataIndex: 'email',
+    key: 'email',
   },
   {
     title: '角色',
@@ -136,48 +73,89 @@ const columns = [
     key: 'action',
   },
 ];
-const data = ref([
-  {
-    key: '1',
-    name: 'John Brown',
-    phone: 32,
-    Email: 'New York No. 1 Lake Park',
-    Role: ['nice', 'developer'],
-  }
-])
 
-// 展示添加用户表单弹窗
-const showModal = () => {
-  addUserModalVisible.value = true
+const data = ref([]);
+const pagination = ref({
+  current: 1,
+  pageSize: 10,
+  total: 0,
+});
+
+const getTagColor = (tag) => {
+  if (tag === 'loser') return 'volcano';
+  if (tag.length > 5) return 'geekblue';
+  return 'green';
 };
 
-// 确定提交添加用户表单
-const handleAddUser = async () => {
-  const res_user = await axios.post("/users/add_user", {
-    NickName: "test",
-    Phone: "12345678901",
-    Email: "test@test.com",
-    Password: "123456",
-    Role: "admin",
-  })
-  if (res_user.data.code === 200) {
-    add_user_visible.value = false
+const fetchData = async (page = 1, size = 10) => {
+  try {
+    const res_user = await axios.post("/users/list", {
+      page: page,
+      size: size,
+    });
+    if (res_user.data.code === 200) {
+      const users = res_user.data.data.map(item => ({
+        key: item.ID,
+        name: item.NickName || '未知',
+        phone: item.Phone,
+        email: item.Email,
+        tags: item.Role ? item.Role.split(',') : [],
+      }));
+      data.value = users;
+      pagination.value.total = res_user.data.data.length;  // 假设 total 在返回的数据中
+    } else {
+      console.error("Error fetching users:", res_user.data.msg);
+    }
+  } catch (error) {
+    console.error("Request failed:", error);
   }
+};
+
+const handleTableChange = (pagination) => {
+  fetchData(pagination.current, pagination.pageSize);
+};
+
+onMounted(() => {
+  fetchData();
+});
+</script>
+
+<style scoped>
+.user-table {
+  margin: 20px;
+  background-color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  border-radius: 8px;
+  overflow: hidden;
 }
 
-// 初始化用户列表
-onMounted(async () => {
-  const res_user = await axios.get("/users/get_user")
-  if (res_user.data.code === 200) {
-    data.value = res_user.data.data.map(item => {
-      return {
-        key: item.UserID,
-        name: item.NickName,
-        phone: item.Phone,
-        Email: item.Email,
-        Role: item.Role,
-      }
-    })
-  }
-})
-</script>
+.user-table .ant-table-thead > tr > th {
+  background-color: #fafafa;
+  font-weight: bold;
+  text-align: center;
+  padding: 12px;
+}
+
+.user-table .ant-table-tbody > tr > td {
+  text-align: center;
+  padding: 12px;
+}
+
+.tag {
+  margin: 2px;
+}
+
+.action-buttons a {
+  margin-right: 8px;
+  color: #1890ff;
+  cursor: pointer;
+}
+
+.action-buttons a:hover {
+  color: #40a9ff;
+}
+
+.ant-divider-vertical {
+  background-color: #e8e8e8;
+}
+</style>

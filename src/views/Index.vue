@@ -21,19 +21,19 @@
             <span>个人资料</span>
           </a-menu-item>
         </a-sub-menu>
-        <a-sub-menu key="3" title="帖子管理">
+        <a-sub-menu key="3" title="帖子模块">
           <a-menu-item key="3-1" @click="goToPage('/post')">
             <a-icon type="file-text" />
             <span>帖子管理</span>
           </a-menu-item>
         </a-sub-menu>
-        <a-sub-menu key="4" title="审核管理">
+        <a-sub-menu key="4" title="审核模块">
           <a-menu-item key="4-1" @click="goToPage('/review')">
             <a-icon type="audit" />
             <span>审核管理</span>
           </a-menu-item>
         </a-sub-menu>
-        <a-sub-menu key="5" title="权限管理">
+        <a-sub-menu key="5" title="权限模块">
           <a-menu-item key="5-1" @click="goToPage('/permission')">
             <a-icon type="lock" />
             <span>权限管理</span>
@@ -45,7 +45,7 @@
             <span>定时任务</span>
           </a-menu-item>
         </a-sub-menu>
-        <a-sub-menu key="7" title="板块管理">
+        <a-sub-menu key="7" title="板块模块">
           <a-menu-item key="7-1" @click="goToPage('/section')">
             <a-icon type="appstore" />
             <span>板块管理</span>
@@ -113,7 +113,7 @@
               <p>{{ postStats }}</p>
             </a-card>
             <a-card class="stat-card" title="审核任务">
-              <p>{{ reviewStats }}</p>
+              <p>{{ checkStats }}</p>
             </a-card>
           </div>
         </div>
@@ -174,7 +174,7 @@ export default {
 
     const userStats = ref(0)
     const postStats = ref(0)
-    const reviewStats = ref(0)
+    const checkStats = ref(0)
 
     const changePasswordRules = {
       email: [{ required: true, message: '请输入邮箱地址', type: 'email' }],
@@ -238,11 +238,11 @@ export default {
     const getStats = async () => {
       try {
         const userResponse = await axios.get('/users/stats')
-        userStats.value = userResponse.data.count
+        userStats.value = userResponse.data.data
         const postResponse = await axios.get('/posts/stats')
-        postStats.value = postResponse.data.count
-        const reviewResponse = await axios.get('/reviews/stats')
-        reviewStats.value = reviewResponse.data.count
+        postStats.value = postResponse.data.data
+        const checkResponse = await axios.get('/checks/stats')
+        checkStats.value = checkResponse.data.data
       } catch (error) {
         console.error('获取统计数据失败:', error)
       }
@@ -263,7 +263,7 @@ export default {
       userAvatar,
       userStats,
       postStats,
-      reviewStats,
+      checkStats,
       goToPage,
       changePassword,
       logout
