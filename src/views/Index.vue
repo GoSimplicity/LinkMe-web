@@ -113,7 +113,7 @@
               <p>{{ postStats }}</p>
             </a-card>
             <a-card class="stat-card" title="审核任务">
-              <p>{{ reviewStats }}</p>
+              <p>{{ checkStats }}</p>
             </a-card>
           </div>
         </div>
@@ -174,7 +174,7 @@ export default {
 
     const userStats = ref(0)
     const postStats = ref(0)
-    const gitreviewStats = ref(0)
+    const checkStats = ref(0)
 
     const changePasswordRules = {
       email: [{ required: true, message: '请输入邮箱地址', type: 'email' }],
@@ -241,8 +241,8 @@ export default {
         userStats.value = userResponse.data.data
         const postResponse = await axios.get('/posts/stats')
         postStats.value = postResponse.data.data
-        const reviewResponse = await axios.get('/reviews/stats')
-        reviewStats.value = reviewResponse.data.data
+        const checkResponse = await axios.get('/checks/stats')
+        checkStats.value = checkResponse.data.data
       } catch (error) {
         console.error('获取统计数据失败:', error)
       }
@@ -263,7 +263,7 @@ export default {
       userAvatar,
       userStats,
       postStats,
-      reviewStats,
+      checkStats,
       goToPage,
       changePassword,
       logout
