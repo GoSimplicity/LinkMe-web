@@ -174,7 +174,7 @@ export default {
 
     const userStats = ref(0)
     const postStats = ref(0)
-    const reviewStats = ref(0)
+    const gitreviewStats = ref(0)
 
     const changePasswordRules = {
       email: [{ required: true, message: '请输入邮箱地址', type: 'email' }],
@@ -238,11 +238,11 @@ export default {
     const getStats = async () => {
       try {
         const userResponse = await axios.get('/users/stats')
-        userStats.value = userResponse.data.count
+        userStats.value = userResponse.data.data
         const postResponse = await axios.get('/posts/stats')
-        postStats.value = postResponse.data.count
+        postStats.value = postResponse.data.data
         const reviewResponse = await axios.get('/reviews/stats')
-        reviewStats.value = reviewResponse.data.count
+        reviewStats.value = reviewResponse.data.data
       } catch (error) {
         console.error('获取统计数据失败:', error)
       }
