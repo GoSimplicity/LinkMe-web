@@ -11,7 +11,7 @@
             <span>信息面板</span>
           </a-menu-item>
         </a-sub-menu>
-        <a-sub-menu key="2" title="用户管理">
+        <a-sub-menu key="2" title="用户模块">
           <a-menu-item key="2-1" @click="goToPage('/user')">
             <a-icon type="user" />
             <span>用户管理</span>
