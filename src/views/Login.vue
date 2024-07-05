@@ -132,8 +132,8 @@ export default {
   name: 'Login',
   setup() {
     const form = ref({
-      email: '',
-      password: ''
+      email: 'admin',
+      password: 'admin'
     })
     const phoneForm = ref({
       phone: '',
