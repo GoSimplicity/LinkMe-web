@@ -89,7 +89,7 @@ const getTagColor = (tag) => {
 
 const fetchData = async (page = 1, size = 10) => {
   try {
-    const res_user = await axios.post("/users/list", {
+    const res_user = await axios.post("/api/users/list", {
       page: page,
       size: size,
     });
