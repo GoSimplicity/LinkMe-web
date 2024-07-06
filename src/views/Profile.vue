@@ -66,7 +66,7 @@ export default {
 
     const getProfile = async () => {
       try {
-        const response = await axios.get('/users/profile')
+        const response = await axios.get('/api/users/profile')
         const data = response.data.data
         console.log('获取的个人资料数据:', data)
 
@@ -98,7 +98,7 @@ export default {
           birthday: profileForm.value.birthday
         }
         console.log('更新的个人资料数据:', updatedProfile)
-        await axios.post('/users/update_profile', updatedProfile)
+        await axios.post('/api/users/update_profile', updatedProfile)
         message.success('个人资料更新成功')
         isEditing.value = false
         originalProfile.value = {...profileForm.value}

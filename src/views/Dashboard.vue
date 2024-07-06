@@ -45,11 +45,11 @@ export default {
 
     const getStats = async () => {
       try {
-        const userResponse = await axios.get('/users/stats')
+        const userResponse = await axios.get('/api/users/stats')
         stats.value[0].value = userResponse.data.data
-        const postResponse = await axios.get('/posts/stats')
+        const postResponse = await axios.get('/api/posts/stats')
         stats.value[1].value = postResponse.data.data
-        const checkResponse = await axios.get('/checks/stats')
+        const checkResponse = await axios.get('/api/checks/stats')
         stats.value[2].value = checkResponse.data.data
       } catch (error) {
         console.error('获取统计数据失败:', error)
@@ -58,7 +58,7 @@ export default {
 
     const getRecentActivities = async () => {
       try {
-        const response = await axios.get('/activity/recent')
+        const response = await axios.get('/api/activity/recent')
         if (response.data.code === 200) {
           console.log('Recent activity data:', response.data.data)
           recentActivity.value = response.data.data

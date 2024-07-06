@@ -44,7 +44,7 @@ export default {
   methods: {
     async fetchPosts() {
       try {
-        const response = await axios.post('/posts/list_post', {
+        const response = await axios.post('/api/posts/list_post', {
           page: this.page,
           size: this.size
         });

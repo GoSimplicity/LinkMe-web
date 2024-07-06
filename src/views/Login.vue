@@ -163,7 +163,7 @@ export default {
     const onFinish = async (values) => {
       console.log('Form Submitted:', values)
       try {
-        const response = await axios.post('/users/login', {
+        const response = await axios.post('/api/users/login', {
           email: values.email,
           password: values.password
         })
@@ -176,7 +176,7 @@ export default {
         if (token) {
           localStorage.setItem('authorization', token)
         }
-        await router.push('/')
+        await router.push('/dashboard')
       } catch (error) {
         message.error('邮箱或密码错误')
         console.error('Failed:', error)
@@ -190,7 +190,7 @@ export default {
     const onPhoneFinish = async (values) => {
       console.log('Phone Form Submitted:', values)
       try {
-        const response = await axios.post('/users/login_sms', {
+        const response = await axios.post('/api/users/login_sms', {
           phone: values.phone,
           code: values.code
         })
@@ -204,7 +204,7 @@ export default {
           localStorage.setItem('authorization', token)
         }
         showPhoneLogin.value = false
-        await router.push('/')
+        await router.push('/dashboard')
         message.success('登录成功')
       } catch (error) {
         console.error('Failed:', error)
@@ -218,7 +218,7 @@ export default {
 
     const sendCode = async () => {
       try {
-        await axios.post('/users/send_sms', {
+        await axios.post('/api/users/send_sms', {
           phone: phoneForm.value.phone
         })
         console.log('验证码已发送')
@@ -230,7 +230,7 @@ export default {
     const onForgotPasswordFinish = async (values) => {
       console.log('Forgot Password Form Submitted:', values)
       try {
-        await axios.post('/users/send_email', {
+        await axios.post('/api/users/send_email', {
           email: values.email
         })
         console.log('密码重置链接已发送')
@@ -247,7 +247,7 @@ export default {
     const onRegisterFinish = async (values) => {
       console.log('Register Form Submitted:', values)
       try {
-        await axios.post('/users/signup', {
+        await axios.post('/api/users/signup', {
           email: values.email,
           password: values.password,
           confirmPassword: values.confirmPassword

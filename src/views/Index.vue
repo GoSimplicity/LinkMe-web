@@ -194,7 +194,7 @@ export default {
       try {
         await changePasswordFormRef.value.validate()
         const { email, password, newPassword, confirmPassword } = changePasswordForm.value
-        await axios.post('/users/change_password', {
+        await axios.post('/api/users/change_password', {
           email,
           password,
           newPassword,
@@ -202,7 +202,7 @@ export default {
         })
         message.success('修改密码成功')
         localStorage.removeItem('authorization')
-        router.push('/login')
+        router.push('/api/login')
       } catch (error) {
         if (error.response) {
           message.error('修改密码失败')
@@ -214,10 +214,10 @@ export default {
 
     const logout = async () => {
       try {
-        await axios.post('/users/logout')
+        await axios.post('/api/users/logout')
         localStorage.removeItem('authorization')
         message.success('登出成功')
-        router.push('/login')
+        router.push('/api/login')
       } catch (error) {
         message.error('登出失败')
         console.error('登出失败:', error)
@@ -226,7 +226,7 @@ export default {
 
     const getProfile = async () => {
       try {
-        const response = await axios.get('/users/profile')
+        const response = await axios.get('/api/users/profile')
         const data = response.data.data
         userName.value = data.NickName
         userAvatar.value = data.Avatar
@@ -237,11 +237,11 @@ export default {
 
     const getStats = async () => {
       try {
-        const userResponse = await axios.get('/users/stats')
+        const userResponse = await axios.get('/api/users/stats')
         userStats.value = userResponse.data.data
-        const postResponse = await axios.get('/posts/stats')
+        const postResponse = await axios.get('/api/posts/stats')
         postStats.value = postResponse.data.data
-        const checkResponse = await axios.get('/checks/stats')
+        const checkResponse = await axios.get('/api/checks/stats')
         checkStats.value = checkResponse.data.data
       } catch (error) {
         console.error('获取统计数据失败:', error)

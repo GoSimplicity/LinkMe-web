@@ -9,7 +9,7 @@ const route = useRoute(); // 获取路由实例
 
 const fetchPostDetail = async (postId) => {
   try {
-    const response = await axios.get(`/posts/detail_post/${postId}`);
+    const response = await axios.get(`/api/posts/detail_post/${postId}`);
     if (response.data.code === 200) {
       post.value = response.data.data;
     } else {
