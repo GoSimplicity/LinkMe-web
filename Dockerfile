@@ -1,5 +1,5 @@
 # 使用node镜像作为构建阶段
-FROM node:14 AS build-stage
+FROM node:21 AS build-stage
 WORKDIR /app
 COPY package*.json ./
 RUN npm install
