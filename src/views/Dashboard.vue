@@ -1,7 +1,7 @@
 <template>
   <div class="dashboard-container">
     <a-page-header title="信息面板" class="dashboard-title" />
-    <a-row gutter={16} class="stats-container">
+    <a-row gutter="16" class="stats-container">
       <a-col v-for="(stat, index) in stats" :key="index" :span="8">
         <a-card>
           <a-statistic :title="stat.title" :value="stat.value" />
@@ -11,9 +11,11 @@
     <a-card class="recent-activities">
       <a-card-meta title="最近活动" />
       <a-list class="activities-list">
-        <a-list-item v-if="recentActivity">
-          <a-list-item-meta :description="formatActivity(recentActivity)" />
-        </a-list-item>
+        <template v-for="item in recentActivity" :key="item.ID">
+          <a-list-item>
+            <a-list-item-meta :description="formatActivity(item)" />
+          </a-list-item>
+        </template>
       </a-list>
     </a-card>
   </div>
@@ -32,7 +34,9 @@ export default {
     'a-col': Col,
     'a-card': Card,
     'a-statistic': Statistic,
-    'a-list': List
+    'a-list': List,
+    'a-list-item': List.Item,
+    'a-list-item-meta': List.Item.Meta
   },
   setup() {
     const stats = ref([
@@ -41,7 +45,7 @@ export default {
       { title: '审核任务', value: 0 }
     ])
 
-    const recentActivity = ref(null)
+    const recentActivity = ref([])
 
     const getStats = async () => {
       try {
@@ -77,7 +81,7 @@ export default {
     }
 
     const formatActivity = (activity) => {
-      return `${formatDate(activity.Time)} - ${activity.Description} - ${activity.UserID}`
+      return `${formatDate(activity.Time)} - ${activity.Description} - 用户ID: ${activity.UserID}`
     }
 
     onMounted(() => {

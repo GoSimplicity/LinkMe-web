@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "@ant-design/icons-vue": "^7.0.1",
+    "@babel/plugin-syntax-jsx": "^7.24.7",
+    "@vitejs/plugin-vue-jsx": "^4.0.0",
     "ant-design-vue": "^4.2.3",
     "axios": "^1.7.2",
     "moment": "^2.30.1",
