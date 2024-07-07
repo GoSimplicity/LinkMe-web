@@ -3,8 +3,8 @@ import { message } from 'ant-design-vue'
 import router from '../router'
 
 const instance = axios.create({
-    // baseURL: 'http://123.56.122.183:9999', // 确认是你的后端服务器地址
-    baseURL: 'http://localhost:9999', // 确认是你的后端服务器地址
+    baseURL: 'http://123.56.122.183:9999', // 确认是你的后端服务器地址
+    // baseURL: 'http://localhost:9999', // 确认是你的后端服务器地址
     timeout: 10000,
     headers: {
         'Content-Type': 'application/json'
