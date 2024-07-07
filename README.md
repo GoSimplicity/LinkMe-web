@@ -6,6 +6,7 @@ LinkMe 是一个使用 Go 语言开发的论坛项目。它旨在为用户提供
 
 ## 在线地址
 http://www.simplecloud.top/
+超级管理员：admin/admin
 
 ## 功能特性
 - 用户注册、登录、注销
