@@ -10,6 +10,7 @@ import ScheduledTask from '../views/ScheduledTask.vue'
 import Section from '../views/Section.vue'
 import Dashboard from '@/views/Dashboard.vue'
 import Profile from '@/views/Profile.vue'
+import Check from '@/views/Check.vue'
 
 const routes = [
     { path: '/login', component: Login },
@@ -26,6 +27,7 @@ const routes = [
             { path: 'scheduled-task', component: ScheduledTask },
             { path: 'section', component: Section },
             { path: 'user/profile', component: Profile },
+            { path: 'check', component: Check },
         ]
     }
 ]
