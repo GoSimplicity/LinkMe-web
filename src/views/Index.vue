@@ -28,7 +28,7 @@
           </a-menu-item>
         </a-sub-menu>
         <a-sub-menu key="4" title="审核模块">
-          <a-menu-item key="4-1" @click="goToPage('/review')">
+          <a-menu-item key="4-1" @click="goToPage('/check')">
             <a-icon type="audit" />
             <span>审核管理</span>
           </a-menu-item>
