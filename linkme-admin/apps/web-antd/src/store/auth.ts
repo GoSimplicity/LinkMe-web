@@ -48,6 +48,7 @@ export const useAuthStore = defineStore('auth', () => {
           getAccessCodesApi(),
         ]);
 
+
         userInfo = fetchUserInfoResult;
         userStore.setUserInfo(userInfo);
         accessStore.setAccessCodes(accessCodes);

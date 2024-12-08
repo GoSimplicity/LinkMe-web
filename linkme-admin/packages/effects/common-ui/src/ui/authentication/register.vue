@@ -72,6 +72,7 @@ function handleSubmit() {
   }
 
   emit('submit', {
+    confirmPassword: formState.confirmPassword,
     password: formState.password,
     username: formState.username,
   });

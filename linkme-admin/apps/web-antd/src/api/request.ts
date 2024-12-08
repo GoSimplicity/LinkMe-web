@@ -58,6 +58,7 @@ function createRequestClient(baseURL: string) {
       // 调用 refreshTokenApi，确保传入 refreshToken
       const resp = await refreshTokenApi({ refreshToken });
       const newToken = resp.data.data;
+      console.log(newToken);
       // 检查 newToken 是否为 undefined 或 null
       if (!newToken) {
         console.error('New token is null or undefined.');
@@ -87,6 +88,8 @@ function createRequestClient(baseURL: string) {
       const currentToken = accessStore.accessToken;
       config.headers.Authorization = formatToken(currentToken);
       config.headers['Accept-Language'] = preferences.app.locale;
+      // 设置 refreshToken 到请求头中
+      config.headers['X-Refresh-Token'] = accessStore.refreshToken;
       return config;
     },
   });
