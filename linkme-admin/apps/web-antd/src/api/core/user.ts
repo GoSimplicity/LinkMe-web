@@ -8,6 +8,11 @@ type RegisterParams = {
   confirmPassword: string;
 };
 
+type getAllUsersReq = {
+  page: number;
+  size: number;
+}
+
 /**
  * 获取用户信息
  */
@@ -17,4 +22,8 @@ export async function getUserInfoApi() {
 
 export async function registerApi(data: RegisterParams) {
   return requestClient.post('/user/signup', data);
+}
+
+export async function getAllUsers(data: getAllUsersReq) {
+  return requestClient.post('/user/list', data)
 }
