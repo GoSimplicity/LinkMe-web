@@ -17,48 +17,67 @@ const routes: RouteRecordRaw[] = [
       {
         name: 'Welcome',
         path: '/system_welcome',
-        component: () => import('#/views/dashboard/system_welcome/SystemWelcome.vue'),
+        component: () => import('#/views/dashboard/SystemWelcome.vue'),
         meta: {
           affixTab: true,
           icon: 'lucide:area-chart',
-          title: $t('page.dashboard.welcome'),
-        },
-      },
-      {
-        name: '菜单管理',
-        path: '/system_menu',
-        component: () => import('#/views/dashboard/system_menu/SystemMenu.vue'),
-        meta: {
-          icon: 'lucide:menu',
-          title: $t('page.dashboard.menus'),
+          title: '欢迎页',
         },
       },
       {
         name: '用户管理',
         path: '/system_user',
-        component: () => import('#/views/dashboard/system_user/SystemUser.vue'),
+        component: () => import('#/views/dashboard/SystemUser.vue'),
         meta: {
           icon: 'lucide:user',
-          title: $t('page.dashboard.users'),
+          title: '用户管理',
         },
       },
       {
-        name: '权限管理',
-        path: '/system_role',
-        component: () => import('#/views/dashboard/system_role/SystemRole.vue'),
+        name: '菜单管理',
+        path: '/system_menu',
+        component: () => import('#/views/dashboard/SystemMenu.vue'),
         meta: {
-          icon: 'lucide:user',
-          title: $t('page.dashboard.roles'),
+          icon: 'lucide:menu',
+          title: '菜单管理',
         },
       },
       {
         name: '接口管理',
         path: '/system_api',
-        component: () => import('#/views/dashboard/system_api/SystemApi.vue'),
+        component: () => import('#/views/dashboard/SystemApi.vue'),
         meta: {
-          title: $t('page.dashboard.apis'),
+          title: '接口管理',
           icon: 'lucide:zap',
         },
+      },
+      {
+        name: '权限管理',
+        path: '/system_permission',
+        meta: {
+          icon: 'lucide:shield',
+          title: '权限管理',
+        },
+        children: [
+          {
+            name: '角色权限',
+            path: '/system_role',
+            component: () => import('#/views/dashboard/SystemRole.vue'),
+            meta: {
+              icon: 'lucide:users',
+              title: '角色权限',
+            },
+          },
+          {
+            name: '用户权限',
+            path: '/system_user_role',
+            component: () => import('#/views/dashboard/SystemUserRole.vue'),
+            meta: {
+              icon: 'lucide:user-cog',
+              title: '用户权限',
+            },
+          }
+        ]
       },
     ],
   },
