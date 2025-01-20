@@ -56,6 +56,6 @@ export async function writeOffUser(data: writeOffUserReq) {
   return requestClient.post('/user/write_off', data);
 }
 
-export async function updateUserInfo(data: updateUserInfoReq) {
+export async function updateUserInfo(data: any) {
   return requestClient.post('/user/profile/update', data);
 }

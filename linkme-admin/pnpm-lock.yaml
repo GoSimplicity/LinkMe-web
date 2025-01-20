@@ -123,6 +123,9 @@ importers:
       '@antv/g2plot':
         specifier: ^2.4.32
         version: 2.4.32
+      '@iconify/vue':
+        specifier: ^4.1.2
+        version: 4.1.2(vue@3.5.3(typescript@5.5.4))
       '@vben/access':
         specifier: workspace:*
         version: link:../../packages/effects/access
