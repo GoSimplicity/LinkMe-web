@@ -32,15 +32,6 @@ const routes: RouteRecordRaw[] = [
         },
       },
       {
-        name: '帖子审核',
-        path: '/post/check',
-        component: () => import('#/views/post/PostCheck.vue'),
-        meta: {
-          icon: 'lucide:check-square',
-          title: '帖子审核',
-        },
-      },
-      {
         name: '评论管理',
         path: '/post/comment',
         component: () => import('#/views/post/CommentManage.vue'),
@@ -50,12 +41,13 @@ const routes: RouteRecordRaw[] = [
         },
       },
       {
-        name: '热门帖子',
-        path: '/post/hot',
-        component: () => import('#/views/post/HotPost.vue'),
+        name: '帖子详情',
+        path: '/post/detail/:id',
+        component: () => import('#/views/post/PostDetail.vue'),
         meta: {
-          icon: 'lucide:flame',
-          title: '热门帖子',
+          icon: 'lucide:file-text',
+          title: '帖子详情',
+          hideInMenu: true,
         },
       },
     ],
