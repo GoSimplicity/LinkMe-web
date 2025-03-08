@@ -52,6 +52,12 @@ type GeneralResp = {
   type: string;
 };
 
+type GetPostsByPlateReq = {
+  plateId: number;
+  page?: number;
+  size?: number;
+};
+
 // 编辑帖子
 export async function EditPost(data: PostEditReq) {
   return requestClient.post<GeneralResp>('/posts/edit', data);
@@ -120,4 +126,8 @@ export async function CollectPost(data: PostCollectReq) {
 // 获取帖子总数
 export async function GetPostCount() {
   return requestClient.get<GeneralResp>('/posts/count');
+}
+
+export async function GetPostsByPlate(data: GetPostsByPlateReq) {
+  return requestClient.post<GeneralResp>('/posts/get_by_plate', data);
 }
